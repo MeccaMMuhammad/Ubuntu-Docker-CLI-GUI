@@ -1,0 +1,83 @@
+1. Create Virtual Machine with Hyper-V
+Launch Hyper-V Manager on Windows Server 2022.
+
+Create a new virtual machine:
+
+Name: UbuntuVM
+
+Generation: 2
+
+RAM: 4GB
+
+VHDX Size: 20GB
+
+OS ISO: ubuntu-22.04.3-live-server-amd64.iso
+
+2. Install Ubuntu 22.04.3 LTS
+
+Boot VM from ISO and follow installation prompts.
+
+Assign static IP or DHCP for network configuration.
+
+Set up user credentials.
+
+Enable OpenSSH Server during install (recommended for remote management).
+
+3. Install Docker on Ubuntu
+
+# Update package index
+sudo apt update
+
+# Install required packages
+sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+
+# Add Docker’s GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Add Docker repo
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
+https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker Engine
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io -y
+
+# Verify Docker is running
+sudo systemctl status docker
+
+4. Deploy a Test Container via Docker CLI
+
+# Pull a test image
+sudo docker pull hello-world
+
+# Run the container
+sudo docker run hello-world
+5. Install Portainer (GUI for Docker)
+
+# Create Docker volume for Portainer data
+sudo docker volume create portainer_data
+
+# Deploy Portainer container
+sudo docker run -d -p 8000:8000 -p 9443:9443 \
+--name portainer --restart=always \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v portainer_data:/data \
+portainer/portainer-ce:latest
+Access Portainer at: https://<your-server-ip>:9443
+
+Set up admin user and begin managing containers through GUI.
+
+6. Bonus: Connect from Kali Purple (optional)
+
+Use ssh or tools like nmap, netcat, etc. from Kali Purple to test the network visibility and security posture of your Ubuntu VM and containers.
+
+🔐 Security Concepts Practiced
+Isolating services using containers and VMs
+
+Understanding attack surfaces in architecture models
+
+Role-based GUI container management via Portainer
+
+Static vs dynamic resource allocation in virtualization
+
